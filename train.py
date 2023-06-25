@@ -63,7 +63,7 @@ if __name__ == "__main__":
     variance = sum(pow(x - mean, 2) for x in input) / len(input)
     std = math.sqrt(variance)
     
-    normalized_input = [(x - mean) / std for x in input]
+    normalized_input = [(x - mean) / std for x in input] # moy 0, std 1
 
     for i in range(iterations_count):
         tmp0 = 0
