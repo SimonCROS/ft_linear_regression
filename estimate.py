@@ -1,10 +1,4 @@
-# import seaborn
-# import pandas
-# import matplotlib.pyplot as plt
 import csv
-
-# res = seaborn.scatterplot(x="km", y="price", data=csv)
-# plt.show()
 
 with open('data.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
