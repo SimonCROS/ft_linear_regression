@@ -8,6 +8,7 @@ class GraphWindow(QMainWindow):
 
         self.graphWidget = pg.PlotWidget()
         self.setCentralWidget(self.graphWidget)
+        self.graphWidget.setMouseEnabled(False, False)
 
         self.graphWidget.setBackground('w')
 
@@ -16,6 +17,6 @@ class GraphWindow(QMainWindow):
         self.graphWidget.setLabel('bottom', x_title)
         self.graphWidget.setLabel('left', y_title)
 
-    def draw_line(self, p1: tuple[float, float], p2: tuple[float, float]):
+    def drawLine(self, p1: tuple[float, float], p2: tuple[float, float]):
         pen = pg.mkPen(color=(255, 0, 0), width=2)
         self.graphWidget.plot([p1[0], p2[0]], [p1[1], p2[1]], pen=pen)

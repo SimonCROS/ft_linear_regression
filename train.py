@@ -4,11 +4,16 @@ import math
 import csv
 from PySide6.QtWidgets import QApplication
 
+from ui import GraphWindow
+
 theta0: float = 0
 theta1: float = 0
 
-x_name: str
-y_name: str
+mean: float = 0
+std: float = 0
+
+inputs_name: str
+targets_name: str
 input: list[float] = []
 targets: list[float] = []
 
@@ -27,6 +32,11 @@ def estimate_price(mileage: float) -> float:
     global theta1
     return theta0 + (theta1 * mileage)
 
+def normalize(value):
+    global mean
+    global std
+    return (value - mean) / std
+
 if __name__ == "__main__":
     try:
         with open('data.csv') as csv_file:
@@ -38,8 +48,8 @@ if __name__ == "__main__":
                     print(f"Wrong line {line_count} ({row})", file=sys.stderr)
                     exit(1)
                 if line_count == 0:
-                    x_name = row[0]
-                    y_name = row[1]
+                    inputs_name = row[0]
+                    targets_name = row[1]
                     line_count += 1
                 else:
                     if not is_float(row[0]):
@@ -63,7 +73,8 @@ if __name__ == "__main__":
     variance = sum(pow(x - mean, 2) for x in input) / len(input)
     std = math.sqrt(variance)
     
-    normalized_input = [(x - mean) / std for x in input] # moy 0, std 1
+    # Normalise will set the mean to 0 and the standard deviation at 1
+    normalized_input = list(map(normalize, input))
 
     for i in range(iterations_count):
         tmp0 = 0
@@ -82,7 +93,8 @@ if __name__ == "__main__":
 
     print(f"theta0 = {theta0}, theta1 = {theta1}")
 
-    # app = QApplication(sys.argv)
-    # w = GraphWindow(x_name, x, y_name, y)
-    # w.show()
-    # app.exec()
+    app = QApplication(sys.argv)
+    w = GraphWindow(inputs_name, input, targets_name, targets)
+    w.drawLine([min(input), estimate_price(normalize(min(input)))], [max(input), estimate_price(normalize(max(input)))])
+    w.show()
+    app.exec()
