@@ -18,7 +18,7 @@ input: list[float] = []
 targets: list[float] = []
 
 learning_rate = 0.1
-iterations_count = 1000
+iterations_count = 100
 
 def is_float(string):
     try:
@@ -27,10 +27,10 @@ def is_float(string):
     except ValueError:
         return False
 
-def estimate_price(mileage: float) -> float:
+def estimate_price(value: float) -> float:
     global theta0
     global theta1
-    return theta0 + (theta1 * mileage)
+    return theta0 + (theta1 * value)
 
 def normalize(value):
     global mean
