@@ -1,5 +1,4 @@
 import sys
-import math
 
 import csv
 from PySide6.QtWidgets import QApplication
