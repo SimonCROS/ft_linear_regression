@@ -81,6 +81,7 @@ if __name__ == "__main__":
         theta0 -= learning_rate * (1 / samples_count) * tmp0
         theta1 -= learning_rate * (1 / samples_count) * tmp1
 
+    # Reverse normalization of theta0 and theta1
     theta1 = theta1 * y_vals_diff / x_vals_diff
     theta0 = theta0 * y_vals_diff + y_min - theta1 * x_min
 
