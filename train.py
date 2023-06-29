@@ -56,6 +56,11 @@ def read_file(file: str):
     print(f'Processed {line_count} lines.')
 
 if __name__ == "__main__":
+    window = False
+    if "-w" in sys.argv:
+        sys.argv.remove("-w")
+        window = True
+
     read_file(sys.argv[1] if len(sys.argv) >= 2 else 'data.csv')
 
     samples_count = len(x_vals)
@@ -91,8 +96,9 @@ if __name__ == "__main__":
         print(ex.strerror, file=sys.stderr)
         exit(1)
 
-    app = QApplication(sys.argv)
-    w = GraphWindow(x_vals_name, x_vals, y_vals_name, y_vals)
-    w.drawLine([x_min, estimate_price(x_min, theta0, theta1)], [x_max, estimate_price(x_max, theta0, theta1)])
-    w.show()
-    app.exec()
+    if window:
+        app = QApplication(sys.argv)
+        w = GraphWindow(x_vals_name, x_vals, y_vals_name, y_vals)
+        w.drawLine([x_min, estimate_price(x_min, theta0, theta1)], [x_max, estimate_price(x_max, theta0, theta1)])
+        w.show()
+        app.exec()
