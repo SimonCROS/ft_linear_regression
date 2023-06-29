@@ -1,4 +1,5 @@
 import sys
+import math
 
 import csv
 from PySide6.QtWidgets import QApplication
@@ -14,7 +15,6 @@ x_vals: list[float] = []
 y_vals: list[float] = []
 
 learning_rate = 0.1
-iterations_count = 1000
 
 def read_file(file: str):
     global x_vals, x_vals_name, y_vals, y_vals_name
@@ -72,7 +72,9 @@ if __name__ == "__main__":
     normalized_x_vals = [(((x - x_min) / x_vals_diff) if x_vals_diff != 0 else 0) for x in x_vals]
     normalized_y_vals = [(((y - y_min) / y_vals_diff) if y_vals_diff != 0 else 0) for y in y_vals]
 
-    for i in range(iterations_count):
+    old_theta1 = float('inf')
+    while not math.isclose(old_theta1, theta1):
+        old_theta1 = theta1
         tmp0 = 0
         tmp1 = 0
 
