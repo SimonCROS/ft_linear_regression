@@ -3,7 +3,7 @@ import sys
 import csv
 from PySide6.QtWidgets import QApplication
 
-from ui import GraphWindow
+from utils import GraphWindow, is_float, estimate_price
 
 theta0: float = 0
 theta1: float = 0
@@ -16,21 +16,10 @@ y_vals: list[float] = []
 learning_rate = 0.1
 iterations_count = 1000
 
-def is_float(string):
+def read_file(file: str):
+    global x_vals, x_vals_name, y_vals, y_vals_name
     try:
-        float(string)
-        return True
-    except ValueError:
-        return False
-
-def estimate_price(x: float) -> float:
-    global theta0
-    global theta1
-    return theta0 + (theta1 * x)
-
-if __name__ == "__main__":
-    try:
-        with open('data.csv') as csv_file:
+        with open(file) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
 
@@ -56,7 +45,18 @@ if __name__ == "__main__":
         print(ex.strerror, file=sys.stderr)
         exit(1)
 
+    if len(x_vals) == 0 or len(y_vals) == 0:
+        print(f'Not enough data avaliable.')
+        exit(0)
+
+    if len(x_vals) != len(y_vals):
+        print(f'Bad file.')
+        exit(1)
+
     print(f'Processed {line_count} lines.')
+
+if __name__ == "__main__":
+    read_file(sys.argv[1] if len(sys.argv) >= 2 else 'data.csv')
 
     samples_count = len(x_vals)
 
@@ -64,15 +64,15 @@ if __name__ == "__main__":
     (x_vals_diff, y_vals_diff) = (x_max - x_min, y_max - y_min)
     
     # Normalise using min-max method
-    normalized_x_vals = [(x - x_min) / x_vals_diff for x in x_vals]
-    normalized_y_vals = [(y - y_min) / y_vals_diff for y in y_vals]
+    normalized_x_vals = [(((x - x_min) / x_vals_diff) if x_vals_diff != 0 else 0) for x in x_vals]
+    normalized_y_vals = [(((y - y_min) / y_vals_diff) if y_vals_diff != 0 else 0) for y in y_vals]
 
     for i in range(iterations_count):
         tmp0 = 0
         tmp1 = 0
 
         for (x, y) in zip(normalized_x_vals, normalized_y_vals):
-            estimated = estimate_price(x)
+            estimated = estimate_price(x, theta0, theta1)
             diff = estimated - y
             tmp0 += diff
             tmp1 += diff * x
@@ -81,11 +81,18 @@ if __name__ == "__main__":
         theta1 -= learning_rate * (1 / samples_count) * tmp1
 
     # Reverse normalization of theta0 and theta1
-    theta1 = theta1 * y_vals_diff / x_vals_diff
+    theta1 = (theta1 * y_vals_diff / x_vals_diff) if x_vals_diff != 0 else 0
     theta0 = theta0 * y_vals_diff + y_min - theta1 * x_min
+
+    try:
+        with open("output.csv", "w") as outfile:
+            outfile.write(f'{theta0},{theta1}')
+    except Exception as ex:
+        print(ex.strerror, file=sys.stderr)
+        exit(1)
 
     app = QApplication(sys.argv)
     w = GraphWindow(x_vals_name, x_vals, y_vals_name, y_vals)
-    w.drawLine([x_min, estimate_price(x_min)], [x_max, estimate_price(x_max)])
+    w.drawLine([x_min, estimate_price(x_min, theta0, theta1)], [x_max, estimate_price(x_max, theta0, theta1)])
     w.show()
     app.exec()
