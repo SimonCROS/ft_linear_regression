@@ -1,7 +1,7 @@
 import pyqtgraph as pg
 from PySide6.QtWidgets import QMainWindow
 
-def estimate_price(x: float, theta0: float, theta1: float) -> float:
+def estimate(x: float, theta0: float, theta1: float) -> float:
     return theta0 + (theta1 * x)
 
 def is_float(string):

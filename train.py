@@ -4,7 +4,7 @@ import math
 import csv
 from PySide6.QtWidgets import QApplication
 
-from utils import GraphWindow, is_float, estimate_price
+from utils import GraphWindow, is_float, estimate
 
 theta0: float = 0
 theta1: float = 0
@@ -42,7 +42,7 @@ def read_file(file: str):
                     y_vals.append(float(row[1]))
                     line_count += 1
     except Exception as ex:
-        print(ex.strerror, file=sys.stderr)
+        print(f"Cannot read the input file: {str(ex)}", file=sys.stderr)
         exit(1)
 
     if len(x_vals) == 0 or len(y_vals) == 0:
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         tmp1 = 0
 
         for (x, y) in zip(normalized_x_vals, normalized_y_vals):
-            estimated = estimate_price(x, theta0, theta1)
+            estimated = estimate(x, theta0, theta1)
             diff = estimated - y
             tmp0 += diff
             tmp1 += diff * x
@@ -95,12 +95,12 @@ if __name__ == "__main__":
         with open("output.csv", "w") as outfile:
             outfile.write(f'{theta0},{theta1}')
     except Exception as ex:
-        print(ex.strerror, file=sys.stderr)
+        print(f"Cannot write the output file: {str(ex)}", file=sys.stderr)
         exit(1)
 
     if window:
         app = QApplication(sys.argv)
         w = GraphWindow(x_vals_name, x_vals, y_vals_name, y_vals)
-        w.drawLine([x_min, estimate_price(x_min, theta0, theta1)], [x_max, estimate_price(x_max, theta0, theta1)])
+        w.drawLine([x_min, estimate(x_min, theta0, theta1)], [x_max, estimate(x_max, theta0, theta1)])
         w.show()
         app.exec()
