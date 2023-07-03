@@ -4,56 +4,17 @@ import math
 import csv
 from PySide6.QtWidgets import QApplication
 
-from utils import GraphWindow, is_float, estimate
+from utils import GraphWindow, read_csv_file, estimate
 
 theta0: float = 0
 theta1: float = 0
 
 x_vals_name: str
-y_vals_name: str
 x_vals: list[float] = []
+y_vals_name: str
 y_vals: list[float] = []
 
 learning_rate = 0.5
-
-def read_file(file: str):
-    global x_vals, x_vals_name, y_vals, y_vals_name
-    try:
-        with open(file) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            line_count = 0
-
-            for row in csv_reader:
-                if len(row) != 2:
-                    print(f"Wrong line {line_count} ({row})", file=sys.stderr)
-                    exit(1)
-                if line_count == 0:
-                    x_vals_name = row[0]
-                    y_vals_name = row[1]
-                    line_count += 1
-                else:
-                    if not is_float(row[0]):
-                        print(f"Wrong line {line_count} ({row[0]}) is not a valid float", file=sys.stderr)
-                        exit(1)
-                    if not is_float(row[1]):
-                        print(f"Wrong line {line_count} ({row[1]}) is not a valid float", file=sys.stderr)
-                        exit(1)
-                    x_vals.append(float(row[0]))
-                    y_vals.append(float(row[1]))
-                    line_count += 1
-    except Exception as ex:
-        print(f"Cannot read the input file: {str(ex)}", file=sys.stderr)
-        exit(1)
-
-    if len(x_vals) == 0 or len(y_vals) == 0:
-        print(f'Not enough data avaliable.')
-        exit(0)
-
-    if len(x_vals) != len(y_vals):
-        print(f'Bad file.')
-        exit(1)
-
-    print(f'Processed {line_count} lines.')
 
 if __name__ == "__main__":
     window = False
@@ -61,7 +22,7 @@ if __name__ == "__main__":
         sys.argv.remove("-w")
         window = True
 
-    read_file(sys.argv[1] if len(sys.argv) >= 2 else 'data.csv')
+    (x_vals_name, x_vals, y_vals_name, y_vals) = read_csv_file(sys.argv[1] if len(sys.argv) >= 2 else 'data.csv')
 
     samples_count = len(x_vals)
 
