@@ -14,7 +14,7 @@ y_vals_name: str
 x_vals: list[float] = []
 y_vals: list[float] = []
 
-learning_rate = 0.1
+learning_rate = 0.5
 
 def read_file(file: str):
     global x_vals, x_vals_name, y_vals, y_vals_name
@@ -72,6 +72,7 @@ if __name__ == "__main__":
     normalized_x_vals = [(((x - x_min) / x_vals_diff) if x_vals_diff != 0 else 0) for x in x_vals]
     normalized_y_vals = [(((y - y_min) / y_vals_diff) if y_vals_diff != 0 else 0) for y in y_vals]
 
+    i = 0
     old_theta1 = float('inf')
     while not math.isclose(old_theta1, theta1):
         old_theta1 = theta1
@@ -87,9 +88,17 @@ if __name__ == "__main__":
         theta0 -= learning_rate * (1 / samples_count) * tmp0
         theta1 -= learning_rate * (1 / samples_count) * tmp1
 
+        i += 1
+
+        if not math.isfinite(theta1):
+            print("Learning rate too big, abort", file=sys.stderr)
+            exit(1)
+
     # Reverse normalization of theta0 and theta1
     theta1 = (theta1 * y_vals_diff / x_vals_diff) if x_vals_diff != 0 else 0
     theta0 = theta0 * y_vals_diff + y_min - theta1 * x_min
+
+    print(f"Regression finished after {i} cycles")
 
     try:
         with open("output.csv", "w") as outfile:
