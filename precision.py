@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     mae /= samples_count
     mse /= samples_count
-    mape /= samples_count - y_vals.count(0)
+    mape /= (samples_count - y_vals.count(0)) or 1
 
     print(" MAE: {:.2f}".format(mae))
     print(" MSE: {:.2f}".format(mse))
