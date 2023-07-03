@@ -1,18 +1,9 @@
 import sys
 import math
 
-import csv
 from PySide6.QtWidgets import QApplication
 
 from utils import GraphWindow, read_csv_file, estimate
-
-theta0: float = 0
-theta1: float = 0
-
-x_vals_name: str
-x_vals: list[float] = []
-y_vals_name: str
-y_vals: list[float] = []
 
 learning_rate = 0.5
 
@@ -32,6 +23,9 @@ if __name__ == "__main__":
     # Normalise using min-max method
     normalized_x_vals = [(((x - x_min) / x_vals_diff) if x_vals_diff != 0 else 0) for x in x_vals]
     normalized_y_vals = [(((y - y_min) / y_vals_diff) if y_vals_diff != 0 else 0) for y in y_vals]
+
+    theta0: float = 0
+    theta1: float = 0
 
     i = 0
     old_theta1 = float('inf')
@@ -62,7 +56,7 @@ if __name__ == "__main__":
     print(f"Regression finished after {i} cycles")
 
     try:
-        with open("output.csv", "w") as outfile:
+        with open("output.txt", "w") as outfile:
             outfile.write(f'{theta0},{theta1}')
     except Exception as ex:
         print(f"Cannot write the output file: {str(ex)}", file=sys.stderr)
